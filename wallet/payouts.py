@@ -12,6 +12,11 @@ def pay_merchant(store: AccountStore, ledger: Ledger, notifier: Notifier, mercha
     platform = store.get(PLATFORM_ACCOUNT)
     net = amount_cents - compute_fee(amount_cents)
     ledger.debit(platform, amount_cents, memo=f"payout to {merchant_id}")
-    entry_id = ledger.credit(merchant, net, memo="payout")
-    notifier.send_receipt(merchant.owner_email, net, "Payout")
-    return entry_id
+    for attempt in range(3):
+        try:
+            entry_id = ledger.credit(merchant, net, memo="payout")
+            notifier.send_receipt(merchant.owner_email, net, "Payout")
+            return entry_id
+        except ConnectionError:
+            if attempt == 2:
+                raise
