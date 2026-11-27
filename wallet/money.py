@@ -1,10 +1,10 @@
 """Money helpers. All balances and amounts inside the service are integer cents."""
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 
 
 def to_cents(amount) -> int:
-    """Convert a decimal amount in dollars (str, int or Decimal) to integer cents, rounding half up."""
-    return int((Decimal(str(amount)) * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+    """Convert a decimal amount in dollars (str, int or Decimal) to integer cents."""
+    return int(Decimal(str(amount)) * 100)
 
 
 def format_cents(cents: int) -> str:
